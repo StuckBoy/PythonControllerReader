@@ -1,48 +1,48 @@
-from operator import truediv
-
-
-class ModAction():
+# TODO
+class ModAction:
     trigger = -1
-    def __init__(self, TargetCore, object, text):
+
+    def __init__(self, TargetCore, item, text):
         self.Core = TargetCore
-        self.targettype = object
+        self.targettype = item
         self.text = text
 
-    def triggercheck(self):
+    def trigger_check(self):
         if self.trigger > 0:
-            self.doaction(self)
+            self.do_action(self)
             return 1
         else:
             return -1
 
-    def doaction(self,me):
+    def do_action(self, me):
         return
 
-    def checkObject(self, object):
-        if object.__class__ == self.targettype.__class__:
+    def check_object(self, item):
+        if item.__class__ == self.targettype.__class__:
             return True
         return False
 
-    def setTrigger(self, object):
-        self.trigger = object
+    def set_trigger(self, item):
+        self.trigger = item
 
 
-class ActionContainer():
+# TODO
+class ActionContainer:
     action = False
-    def triggercheck(self):
+
+    def trigger_check(self):
         if self.action.triggercheck() > 0:
             self.action = False
 
-    def hasAction(self):
-        if self.action == False:
+    def has_action(self):
+        if not self.action:
             return False
         return True
 
-    def setTrigger(self, trigger):
+    def set_trigger(self, trigger):
         if self.action.checkObject(trigger):
             self.action.setTrigger(trigger)
             self.action.doaction()
             self.action = False
             return True
         return False
-

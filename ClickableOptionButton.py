@@ -1,4 +1,4 @@
-class ClickableOptionButton():
+class ClickableOptionButton:
     def __init__(self, x, y, image):
         self.image = image
         self.rect = self.image.get_rect()
@@ -12,5 +12,5 @@ class ClickableOptionButton():
     def doclicked(self):
         return False
 
-    def setImage(self, image):
+    def set_image(self, image):
         self.image = image

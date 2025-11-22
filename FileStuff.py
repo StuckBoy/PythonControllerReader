@@ -1,22 +1,20 @@
 from os import listdir
+
 from pygame import draw, font
 
 font.init()
 FONT = font.Font('SuperMystery.ttf', 11)
 
-class ColorBox():
+
+class ColorBox:
     rect = False
     textitem = False
     text = ""
 
-
     def __init__(self):
-
         self.text = "#rrggbb"
-        self.textitem = FONT.render(self.text, True,(75,200,200))
+        self.textitem = FONT.render(self.text, True, (75, 200, 200))
         self.rect = self.textitem.get_rect()
-
-
 
     ##THIS IS ABSOLUTELY GENIUS RIGHT HERE
     ##I DON'T KNOW THE OFFICIAL NAME OF THIS PATTERN
@@ -27,30 +25,27 @@ class ColorBox():
 
     def updatetext(self, new):
         self.text = new
-        self.textitem = FONT.render(self.text,True,(75,200,200))
+        self.textitem = FONT.render(self.text, True, (75, 200, 200))
         rect = self.textitem.get_rect()
         rect.x = self.rect.x
         rect.y = self.rect.y
         self.rect = rect
 
-class FileBox():
+
+class FileBox:
     rect = False
     textitem = False
     text = ""
 
-
-    def __init__(self, textitem,rect,text):
-
+    def __init__(self, textitem, rect, text):
         self.rect = rect
         self.textitem = textitem
         self.text = text
 
-
-
     ##THIS IS ABSOLUTELY GENIUS RIGHT HERE
     ##I DON'T KNOW THE OFFICIAL NAME OF THIS PATTERN
     ##I'M CALLING IT THE DOUBLE DUMMY PATTERN
-    def clickdummy(self,item):
+    def clickdummy(self, item):
         return
 
     def doclicked(self):
@@ -59,85 +54,88 @@ class FileBox():
 
     def updatetext(self, new):
         self.text = new
-        self.textitem = FONT.render(self.text,True,(75,200,200))
+        self.textitem = FONT.render(self.text, True, (75, 200, 200))
         rect = self.textitem.get_rect()
         rect.x = self.rect.x
         rect.y = self.rect.y
         self.rect = rect
 
-class FileWindow():
+
+class FileWindow:
     xpos = 0
     ypos = 0
     height = 0
     width = 0
     state = False
-    itemdict = {}
+    """
+    The returned "secret sauce"
+    """
+    item_dict = {}
 
     mode = False
+
     def __init__(self):
         return
 
     def update(self):
         biggest = 0
-        for item in self.itemdict:
+        for item in self.item_dict:
             if item.rect.width > biggest:
-               biggest = item.rect.width
-        self.width = biggest+4
+                biggest = item.rect.width
+        self.width = biggest + 4
 
-
-
-    def UpdateSelf(self, directory = False, coords = (), mode = False):
+    def UpdateSelf(self, directory=False, coords=(), mode=False):
         self.height = 0
         self.width = 0
         self.x, self.y = coords[0], coords[1]
-        self.itemdict = {}
+        self.item_dict = {}
         self.mode = mode
         if directory:
             filelist = listdir(directory)
             buffer = 2
             for item in filelist:
-                textbox = FONT.render(str(item),True,(75,200,200))
+                textbox = FONT.render(str(item), True, (75, 200, 200))
                 rect = textbox.get_rect()
                 addheight = rect.height
                 rect.x = self.x + 2
                 rect.y = self.y - addheight - buffer
 
-                box = FileBox(textbox,rect,str(item))
+                box = FileBox(textbox, rect, str(item))
                 buffer = buffer + addheight + 1
                 width = rect.width
                 if width > self.width:
                     self.width = width
-                self.itemdict[box] = rect
+                self.item_dict[box] = rect
 
             if self.mode == "save":
-                textbox = FONT.render("NEW", True, (75,200,200))
+                textbox = FONT.render("NEW", True, (75, 200, 200))
                 rect = textbox.get_rect()
                 addheight = rect.height
                 rect.x = self.x + 2
                 rect.y = self.y - addheight - buffer
                 box = FileBox(textbox, rect, "NEW")
-                buffer = buffer+addheight+1
+                buffer = buffer + addheight + 1
                 width = rect.width
                 if width > self.width:
                     self.width = width
-                self.itemdict[box] = rect
+                self.item_dict[box] = rect
 
             buffer = buffer + 2
             self.height = buffer
-            self.width = self.width+4
+            self.width = self.width + 4
             self.state = True
 
-        return self.itemdict
+        return self.item_dict
 
     def draw(self, WINDOW):
-        if self.state == True:
-            draw.rect(WINDOW,(75,75,175),(self.x,self.y-self.height,self.width,self.height))
-            for item in self.itemdict:
+        if self.state:
+            draw.rect(WINDOW, (75, 75, 175), (self.x, self.y - self.height, self.width, self.height))
+            for item in self.item_dict:
                 WINDOW.blit(item.textitem, item.rect)
 
-    def setDoClicked(self, function, function2 = False):
-        for item in self.itemdict:
+    def setDoClicked(self, function, function2=False):
+        for item in self.item_dict:
             if item.text != "NEW":
-                item.doclicked = function
+                item.do_clicked = function
             else:
-                item.doclicked = function2
+                item.do_clicked = function2

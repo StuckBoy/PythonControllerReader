@@ -1,20 +1,21 @@
-import pygame
-from PS5Controller import PlayStation5Controller
-from joystickstuff import Button, TriggerAxis, Stick, Hat, Background
-from GenericController import GenericController
-from ClickableOptionButton import ClickableOptionButton
-from FileStuff import FileWindow, FileBox
+import sys
 from os import listdir
 from zipfile import ZipFile
+
+import pygame
 from pygame import image, transform
-import sys
+
+from ClickableOptionButton import ClickableOptionButton
+from FileStuff import FileWindow, FileBox
+from GenericController import GenericController
+from joystickstuff import Button, TriggerAxis, Stick, Hat, Background
+
 if getattr(sys, 'frozen', False):
     import pyi_splash
 
-
 pygame.init()
 joysticks = {}
-for i in range (pygame.joystick.get_count()):
+for i in range(pygame.joystick.get_count()):
     joysticks[i] = pygame.joystick.Joystick(i)
 font = pygame.font.Font('SuperMystery.ttf', 32)
 background = pygame.image.load("assets/Background.png")
@@ -22,7 +23,7 @@ rect = background.get_rect()
 x = int(rect.bottomright[0])
 y = int(rect.bottomright[1])
 pygame.display.set_caption('Controller Input Visualizer')
-display = pygame.display.set_mode((x,y+24))
+display = pygame.display.set_mode((x, y + 24))
 clock = pygame.time.Clock()
 filewindow = FileWindow()
 
@@ -34,7 +35,8 @@ class APMCounter():
     averageapm = 0
     highest = 0
     ValueTarget = False
-    def __init__(self,target):
+
+    def __init__(self, target):
         self.ValueTarget = target
         self.text = font.render('APLM: ' + str(self.actionperlastminute), True, (149, 75, 220))
         rect = self.text.get_rect()
@@ -48,30 +50,34 @@ class APMCounter():
         if self.timepassed > 3600:
             self.valuelist.pop(0)
         length = len(self.valuelist)
-        num1 = self.valuelist[length-1]
+        num1 = self.valuelist[length - 1]
         num2 = self.valuelist[0]
         value = num1 - num2
         self.actionperlastminute = value
         if self.actionperlastminute > self.highest:
             self.highest = self.actionperlastminute
-        self.averageapm = int(self.valuelist[length-1]/(self.timepassed/3600))
+        self.averageapm = int(self.valuelist[length - 1] / (self.timepassed / 3600))
 
     def draw(self, WINDOW):
         self.text = font.render('APLM: ' + str(self.actionperlastminute), True, (149, 75, 220))
-        WINDOW.blit(self.text, (int(x/2)-int(self.width/2), y-self.height))
+        WINDOW.blit(self.text, (int(x / 2) - int(self.width / 2), y - self.height))
 
     def resetCounter(self):
         self.valuelist = []
         self.timepassed = 0
 
+
 controller = False
-def load(filename = ""):
+
+
+def load(filename=""):
     if filename[-4:] == '.zip':
         return loadzip(filename)
     else:
         return loadfile(filename)
 
-def loadzip(filename = ""):
+
+def loadzip(filename=""):
     Controller = False
     with ZipFile(filename, 'r') as zf:
         folder = filename[:-4].removeprefix('./layouts/')
@@ -161,7 +167,7 @@ def loadzip(filename = ""):
                     addtrigger.paddle = paddle
                     addtrigger.paddleimage = paddleimagename
                     addtrigger.bar = bar
-                    addtrigger.barimage = triggerimagename
+                    addtrigger.bar_image = triggerimagename
                     addtrigger.unpressedimage = unpress
                     addtrigger.unpressed = unpressname
                     addtrigger.pressed = pressname
@@ -281,7 +287,8 @@ def loadzip(filename = ""):
             Controller.resetListItems()
     return Controller
 
-def loadfile(filename = ""):
+
+def loadfile(filename=""):
     if filename == "":
         filename = "./layouts/layout.txt"
     file = open(filename, 'r')
@@ -344,7 +351,7 @@ def loadfile(filename = ""):
                 flipbool = False
             addtrigger = TriggerAxis(xpos, ypos, axisnum, False, mode, rotate, name)
             addtrigger.paddleimage = paddleimage
-            addtrigger.barimage = triggerimage
+            addtrigger.bar_image = triggerimage
             addtrigger.pressed = pressname
             addtrigger.unpressed = unpressedname
             addtrigger.horizontal = flipbool
@@ -374,7 +381,7 @@ def loadfile(filename = ""):
                 buttonname = values[8]
             # stick creation data format
             # (xpos,ypos,vertaxis, horizontalaxis, buttonnumber)
-            addstick = Stick(xpos, ypos, vertaxis, horizontalaxis, buttonnumber,False,stickname, buttonname)
+            addstick = Stick(xpos, ypos, vertaxis, horizontalaxis, buttonnumber, False, stickname, buttonname)
             addstick.pressed = onimage
             addstick.unpressed = offimage
             addstick.load()
@@ -415,7 +422,7 @@ def loadfile(filename = ""):
     if controller:
         Controller = GenericController(controller.gamepad)
     else:
-        if(len(joysticks)>0):
+        if len(joysticks) > 0:
             Controller = GenericController(joysticks[0])
         else:
             Controller = GenericController(False)
@@ -430,37 +437,39 @@ def loadfile(filename = ""):
         return Controller
     return False
 
+
 def createlogfile():
     filelist = listdir('./logs')
     listlen = len(filelist)
-    logname = 'log_'+str(listlen)+".txt"
-    file = open('./logs/'+logname, 'w')
+    logname = 'log_' + str(listlen) + ".txt"
+    file = open('./logs/' + logname, 'w')
     duration = controller.timecount
     actions = controller.actioncount
-    minutes = int(duration/3600)
-    seconds = int((duration%3600)/60)
-    leftover = duration%60
+    minutes = int(duration / 3600)
+    seconds = int((duration % 3600) / 60)
+    leftover = duration % 60
     average = counter.averageapm
     highest = counter.highest
-    file.write("Frames Logged(60 fps): " + str(duration)+'\n')
-    file.write("Actual time passed: " +str(minutes)+"m"+str(seconds)+"s"+ " and " + str(leftover) +" frames"+'\n')
-    file.write("Actions logged: " +str(actions)+'\n')
-    file.write("Overall average per minute: " + str(average)+'\n')
-    file.write("Highest minute: " + str(highest)+'\n')
+    file.write("Frames Logged(60 fps): " + str(duration) + '\n')
+    file.write(
+        "Actual time passed: " + str(minutes) + "m" + str(seconds) + "s" + " and " + str(leftover) + " frames" + '\n')
+    file.write("Actions logged: " + str(actions) + '\n')
+    file.write("Overall average per minute: " + str(average) + '\n')
+    file.write("Highest minute: " + str(highest) + '\n')
     buttondict = controller.buttondict
     axisdict = controller.axisdict
     hatdict = controller.hatdict
     sticklist = controller.sticklist
-    file.write ("BTTONS *************\n")
+    file.write("BTTONS *************\n")
     for item in buttondict:
         var = buttondict[item].actions
         if len(buttondict[item].name) > 0:
             name = buttondict[item].name
         else:
             name = buttondict[item].buttonnum
-        #name = buttondict[item].name
-        file.write("Button " +str(name)+": " + str(var) + "\n")
-    file.write ("AXIS *************\n")
+        # name = buttondict[item].name
+        file.write("Button " + str(name) + ": " + str(var) + "\n")
+    file.write("AXIS *************\n")
     for item in axisdict:
         var = axisdict[item].actions
         if len(axisdict[item].name) > 0:
@@ -468,21 +477,21 @@ def createlogfile():
         else:
             name = axisdict[item].axis
         # name = axisdict[item].name
-        file.write("Axis " +str(name)+": " + str(var) + "\n")
+        file.write("Axis " + str(name) + ": " + str(var) + "\n")
     file.write("HATS *************\n")
     for item in hatdict:
         var = hatdict[item].actions
-        if len(hatdict[item].name)>0:
+        if len(hatdict[item].name) > 0:
             name = hatdict[item].name
         else:
             name = hatdict[item].hatnumber
         # name = hatdict[item].name
-        file.write("Hat " +str(name)+": " + str(var) + "\n")
-    file.write ("STICKS *************\n")
+        file.write("Hat " + str(name) + ": " + str(var) + "\n")
+    file.write("STICKS *************\n")
     for i in range(len(sticklist)):
         pressed = sticklist[i].pressactions
         moved = sticklist[i].moveactions
-        total = pressed+moved
+        total = pressed + moved
         if len(sticklist[i].stickname) > 0:
             name = sticklist[i].stickname
         else:
@@ -493,77 +502,86 @@ def createlogfile():
         else:
             buttname = "pressed"
         # name = sticklist[i].name
-        file.write("Stick " + str(name) + "- total = " +str(total) + " - "+buttname+" = " +str(pressed) + " - moved = " +str(moved) + "\n")
+        file.write("Stick " + str(name) + "- total = " + str(total) + " - " + buttname + " = " + str(
+            pressed) + " - moved = " + str(moved) + "\n")
 
     file.close()
-    Reset()
+    reset()
 
 
 controller = load("./layouts/layout.txt")
 controller.resetListItems()
 counter = APMCounter(controller)
 
-def Reset():
-        counter.resetCounter()
-        controller.resetCounter()
-        return 0
 
-def ToggleLines():
+def reset():
+    counter.resetCounter()
+    controller.resetCounter()
+    return 0
+
+
+def toggle_lines():
     controller.StickLines = not controller.StickLines
 
-def loadclicked(self):
-    dummy = load("./layouts/"+self.text)
-    drawlist[0] = dummy
-    counter.ValueTarget =  dummy
+
+def load_clicked(self):
+    """
+    FIXME Documentation necessary. This method is the load bearing bit of the
+     decorator pattern being employed. Summarize behavior here and enshrine for
+     future reference.
+    """
+    dummy = load("./layouts/" + self.text)
+    draw_list[0] = dummy
+    counter.ValueTarget = dummy
     return dummy
 
-def LoadButtonDoClicked():
-    itemlist = filewindow.UpdateSelf("./layouts/",(position[0],position[1]))
+
+def load_button_do_clicked():
+    itemlist = filewindow.UpdateSelf("./layouts/", (position[0], position[1]))
 
     for item in itemlist:
-        item.clickdummy = loadclicked
+        item.clickdummy = load_clicked
 
     return itemlist
 
+
+# all_lowercase = ultra-temporary variables
 resetimage = pygame.image.load('./assets/resetbutton.png')
 resetrect = resetimage.get_rect()
-ResetButton = ClickableOptionButton(1, y,resetimage)
-ResetButton.doclicked = Reset
+# double_camel_case = Sum of it's previously stated parts
+ResetButton = ClickableOptionButton(1, y, resetimage)
+ResetButton.do_clicked = reset
 
 loadimage = pygame.image.load('assets/loadbutton.png')
 loadrect = loadimage.get_rect()
-LoadButton = ClickableOptionButton(ResetButton.rect.x + loadrect.width+1, ResetButton.rect.y,loadimage)
-LoadButton.doclicked = LoadButtonDoClicked
+LoadButton = ClickableOptionButton(ResetButton.rect.x + loadrect.width + 1, ResetButton.rect.y, loadimage)
+LoadButton.do_clicked = load_button_do_clicked
 
 linetoggleimage = pygame.image.load('./assets/linesbutton.png')
-linerect = linetoggleimage.get_rect()
-LineToggleButton = ClickableOptionButton(x-linerect.width, y,linetoggleimage)
-LineToggleButton.doclicked = ToggleLines
+line_rect = linetoggleimage.get_rect()
+LineToggleButton = ClickableOptionButton(x - line_rect.width, y, linetoggleimage)
+LineToggleButton.do_clicked = toggle_lines
 
-logbuttonimage = pygame.image.load('./assets/logbutton.png')
-logrect = logbuttonimage.get_rect()
-LogButton = ClickableOptionButton(LoadButton.rect.x+LoadButton.rect.width, y, logbuttonimage)
-LogButton.doclicked = createlogfile
+log_button_image = pygame.image.load('./assets/logbutton.png')
+log_rect = log_button_image.get_rect()
+LogButton = ClickableOptionButton(LoadButton.rect.x + LoadButton.rect.width, y, log_button_image)
+LogButton.do_clicked = createlogfile
 
-
-collidables = []
-collidables.append(ResetButton)
-collidables.append(LineToggleButton)
-collidables.append(LoadButton)
-collidables.append(LogButton)
-drawlist = [controller, counter,ResetButton, LoadButton, LineToggleButton, LogButton, filewindow]
+collidables = [ResetButton, LineToggleButton, LoadButton, LogButton]
+draw_list = [controller, counter, ResetButton, LoadButton, LineToggleButton, LogButton, filewindow]
 
 
-def CollisionCheck(mousepos, collisionbox):
-    mousex = mousepos[0]
-    mousey = mousepos[1]
+def collision_check(mouse_pos, collision_box):
+    mouse_x = mouse_pos[0]
+    mouse_y = mouse_pos[1]
 
-    if mousex >= collisionbox[0] and mousex <= collisionbox[0]+collisionbox[2]:
-        if mousey >= collisionbox[1] and mousey <= collisionbox[1]+collisionbox[3]:
+    if collision_box[0] <= mouse_x <= collision_box[0] + collision_box[2]:
+        if collision_box[1] <= mouse_y <= collision_box[1] + collision_box[3]:
             return True
     return False
 
-#controller = PlayStation5Controller(0)
+
+# controller = PlayStation5Controller(0)
 
 done = False
 
@@ -572,8 +590,8 @@ if getattr(sys, 'frozen', False):
 
 while not done:
 
-    eventlist = pygame.event.get()
-    for event in eventlist:
+    event_list = pygame.event.get()
+    for event in event_list:
         if event.type == pygame.QUIT:
             done = True
 
@@ -586,28 +604,29 @@ while not done:
 
                 for i in range(len(collidables) - 1, -1, -1):
                     item = collidables[i]
-                    touch = CollisionCheck(position, item.rect)
+                    touch = collision_check(position, item.rect)
                     if touch:
                         collided = item
                         if collided.__class__ == ClickableOptionButton:
-                            check = collided.doclicked()
+                            check = collided.do_clicked()
                             if check.__class__ == dict:
                                 for item in check:
                                     collidables.append(item)
                         elif collided.__class__ == FileBox:
-                            check = collided.doclicked()
+                            check = collided.do_clicked()
                             print("high")
                             if check.__class__ == GenericController:
                                 controller = check
                         break
 
                 if check.__class__ != dict:
-                    for item in filewindow.itemdict:
+                    for item in filewindow.item_dict:
                         for thing in collidables:
                             if thing == item:
                                 collidables.remove(item)
                     break
 
+        # Was a device added?
         if event.type == pygame.JOYDEVICEADDED:
             # This event will be generated when the program starts for every
             # joystick, filling up the list without needing to create them manually.
@@ -619,11 +638,12 @@ while not done:
                     controller.gamepad = joysticks[ID]
                     controller.resetListItems()
 
+        # Was a device removed?
         if event.type == pygame.JOYDEVICEREMOVED:
             # This event will be generated when the program starts for every
             # joystick, filling up the list without needing to create them manually.
             joy = event.instance_id
-            #ID = ActiveStick.gamepad.get_instance_id()
+            # ID = ActiveStick.gamepad.get_instance_id()
             if controller:
                 if controller.gamepad:
                     if controller.gamepad.get_instance_id() == joy:
@@ -632,14 +652,13 @@ while not done:
                         text = font.render(words, True, (200, 74, 220))
             del joysticks[joy]
     if done:
-
         break
 
     controller.update()
     counter.update()
-    display.blit(background, (0,0))
+    display.blit(background, (0, 0))
 
-    for item in drawlist:
+    for item in draw_list:
         item.draw(display)
 
     pygame.display.update()

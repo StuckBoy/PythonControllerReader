@@ -1,21 +1,23 @@
 from zipfile import ZipFile
-from joystickstuff import Button, Stick, TriggerAxis, Hat
-from GenericController import GenericController
+
 from pygame import image, transform
+
+from GenericController import GenericController
+from joystickstuff import Button, Stick, TriggerAxis, Hat
 
 filename = 'TestZip.zip'
 
 with ZipFile(filename) as zf:
     for file in zf.namelist():
-        if not file.endswith('.png'): # optional filtering by filetype
+        if not file.endswith('.png'):  # optional filtering by filetype
             continue
         with zf.open(file) as f:
             print(file)
-            #image = pygame.image.load(f, namehint=file)
+            # image = pygame.image.load(f, namehint=file)
 
 with ZipFile(filename, 'r') as zf:
     folder = filename[:-4]
-    with zf.open(folder+'/layout.txt') as layout:
+    with zf.open(folder + '/layout.txt') as layout:
         print('peepus poopus')
         lines = layout.readlines()
         bookmarks = []
@@ -41,20 +43,20 @@ with ZipFile(filename, 'r') as zf:
                 if 6 < len(values):
                     name = str(values[6])
                 addbutton = Button(buttonnum, xpos, ypos, False, name)
-                #addbutton.unpressed = offimage
-                offimagename = folder+offimage
-                onimagename = folder+onimage
+                # addbutton.unpressed = offimage
+                offimagename = folder + offimage
+                onimagename = folder + onimage
                 with zf.open(offimagename) as f:
                     off = image.load(f)
-                #addbutton.pressed = onimage
+                # addbutton.pressed = onimage
                 with zf.open(onimagename) as f:
                     on = image.load(f)
-                off = transform.rotate(off,rotation)
+                off = transform.rotate(off, rotation)
                 on = transform.rotate(on, rotation)
                 addbutton.on = on
                 addbutton.off = off
                 addbutton.rotate = rotation
-                #addbutton.load()
+                # addbutton.load()
                 buttondict[buttonnum] = addbutton
 
         axisdict = {}
@@ -83,10 +85,10 @@ with ZipFile(filename, 'r') as zf:
                     flipbool = False
                 addtrigger = TriggerAxis(xpos, ypos, axisnum, False, mode, rotate, name)
 
-                paddleimagename = folder+paddleimage.removeprefix('.')
-                triggerimagename = folder+triggerimage.removeprefix('.')
-                pressname = folder+pressed.removeprefix('.')
-                unpressname = folder+unpressed.removeprefix('.')
+                paddleimagename = folder + paddleimage.removeprefix('.')
+                triggerimagename = folder + triggerimage.removeprefix('.')
+                pressname = folder + pressed.removeprefix('.')
+                unpressname = folder + unpressed.removeprefix('.')
 
                 with zf.open(paddleimagename) as f:
                     paddle = image.load(f)
@@ -97,21 +99,21 @@ with ZipFile(filename, 'r') as zf:
                 with zf.open(unpressname) as f:
                     unpress = image.load(f)
                 if flipbool == True:
-                    paddle = transform.rotate(paddle,90)
-                    bar = transform.rotate(bar,90)
+                    paddle = transform.rotate(paddle, 90)
+                    bar = transform.rotate(bar, 90)
                 addtrigger.paddle = paddle
                 addtrigger.paddleimage = paddleimagename
                 addtrigger.bar = bar
-                addtrigger.barimage = triggerimagename
+                addtrigger.bar_image = triggerimagename
                 addtrigger.unpressedimage = unpress
                 addtrigger.unpressed = unpressname
                 addtrigger.pressed = pressname
                 addtrigger.pressedimage = press
 
-                #addtrigger.paddleimage = paddleimage
-                #addtrigger.barimage = triggerimage
+                # addtrigger.paddleimage = paddleimage
+                # addtrigger.barimage = triggerimage
                 addtrigger.horizontal = flipbool
-                #addtrigger.load()
+                # addtrigger.load()
                 axisdict[axisnum] = addtrigger
 
         sticklist = []
@@ -151,9 +153,9 @@ with ZipFile(filename, 'r') as zf:
                 addstick.stickunpressed = off
                 addstick.stickpressed = on
 
-                #addstick.pressed = onimage
-                #addstick.unpressed = offimage
-                #addstick.load()
+                # addstick.pressed = onimage
+                # addstick.unpressed = offimage
+                # addstick.load()
                 sticklist.append(addstick)
         hatdict = {}
         for i in range(bookmarks[3], length):
@@ -191,11 +193,11 @@ with ZipFile(filename, 'r') as zf:
                 addhat.pressed = on
                 addhat.unpressed = off
                 addhat.backgroundimage = bg
-                #addhat.unpressed = offimage
-                #addhat.pressed = onimage
-                #addhat.background = backgroundimage
-                #addhat.rotate = rotation
-                #addhat.load()
+                # addhat.unpressed = offimage
+                # addhat.pressed = onimage
+                # addhat.background = backgroundimage
+                # addhat.rotate = rotation
+                # addhat.load()
                 hatdict[hatnum] = addhat
 
         Controller = GenericController(False)
@@ -204,11 +206,7 @@ with ZipFile(filename, 'r') as zf:
         Controller.sticklist = sticklist
         Controller.hatdict = hatdict
         Controller.resetListItems()
-    #return Controller
-
-
-
-
+    # return Controller
 
 print('yo waddup')
 print('we done here')

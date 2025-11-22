@@ -216,7 +216,7 @@ def save(filename=""):
             number = str(axisdict[axis].axis)
             xpos = str(axisdict[axis].x - x)
             ypos = str(axisdict[axis].y - y)
-            barim = str(axisdict[axis].barimage)
+            barim = str(axisdict[axis].bar_image)
             paddleim = str(axisdict[axis].paddleimage)
             flip = str(axisdict[axis].horizontal)
             mode = str(axisdict[axis].mode)
@@ -365,7 +365,7 @@ def loadfile(filename=""):
                 flipbool = False
             addtrigger = TriggerAxis(xpos, ypos, axisnum, False, mode, rotate, name)
             addtrigger.paddleimage = paddleimage
-            addtrigger.barimage = triggerimage
+            addtrigger.bar_image = triggerimage
             addtrigger.pressed = pressname
             addtrigger.unpressed = unpressedname
             addtrigger.horizontal = flipbool
@@ -535,10 +535,10 @@ ReloadButton = ClickableOptionButton(0, 0, reloadimage)
 
 MakeStickButton = ClickableOptionButton(SaveButton.rect.x + (LoadButton.rect.x - SaveButton.rect.x) / 2,
                                         SaveButton.rect.y + 50, makestickimage)
-SaveButton.doclicked = SaveButtonDoClicked
-LoadButton.doclicked = LoadButtonDoClicked
-MakeStickButton.doclicked = makeStick
-ReloadButton.doclicked = reloadController
+SaveButton.do_clicked = SaveButtonDoClicked
+LoadButton.do_clicked = LoadButtonDoClicked
+MakeStickButton.do_clicked = makeStick
+ReloadButton.do_clicked = reloadController
 
 collidables.append(SaveButton)
 collidables.append(LoadButton)
@@ -660,10 +660,10 @@ def rotateButtonImage():
 
 ChangeImage = pygame.image.load('assets/changebutton.png')
 changebutton = ClickableOptionButton(x + 20, y - ChangeImage.get_rect().height, ChangeImage)
-changebutton.doclicked = ChangeButtonDoClicked
+changebutton.do_clicked = ChangeButtonDoClicked
 RotateImage = pygame.image.load('assets/rotatebutton.png')
 rotatebutton = ClickableOptionButton(x + 40 + 135, y - 50, RotateImage)
-rotatebutton.doclicked = rotateButtonImage
+rotatebutton.do_clicked = rotateButtonImage
 ButtonModList = [changebutton, rotatebutton]
 
 horizontalaxis = pygame.image.load('assets/horizontalaxisbutton.png')
@@ -674,14 +674,14 @@ changehorizontalbutton = ClickableOptionButton(changebutton.rect.x, changebutton
 # TODO
 def addButtontoController(Core, buttonnum):
     buttonadd = Button(buttonnum, Core.x, Core.y - (Core.stickunpressed.get_rect().bottomright[1] * 2), ActiveStick)
-    buttonadd.Rotate()
+    buttonadd.rotate()
     ActiveStick.buttondict[buttonnum] = buttonadd
 
 
 # TODO
 def addAxistoController(Core, Axisnum):
     axisadd = TriggerAxis(Core.x, Core.y - (Core.stickunpressed.get_rect().bottomright[1] * 2), Axisnum, ActiveStick)
-    axisadd.Rotate()
+    axisadd.rotate()
     ActiveStick.axisdict[Axisnum] = axisadd
 
 
@@ -712,7 +712,7 @@ def changehorizontalclicked():
     return action
 
 
-changehorizontalbutton.doclicked = changehorizontalclicked
+changehorizontalbutton.do_clicked = changehorizontalclicked
 
 vertaxis = pygame.image.load('assets/vertaxisbutton.png')
 
@@ -746,7 +746,7 @@ def changevertclicked():
     return action
 
 
-changevertbutton.doclicked = changevertclicked
+changevertbutton.do_clicked = changevertclicked
 
 changeButtonImage = pygame.image.load('assets/addbutton.png')
 changeStickButton = ClickableOptionButton(changevertbutton.rect.x - 12, changehorizontalbutton.rect.y - 50,
@@ -779,7 +779,7 @@ def changebuttonclicked():
     return action
 
 
-changeStickButton.doclicked = changebuttonclicked
+changeStickButton.do_clicked = changebuttonclicked
 
 DropSettingsImage = pygame.image.load('assets/dropsettings.png')
 detachAllButton = ClickableOptionButton(changeStickButton.rect.x - DropSettingsImage.get_rect().bottomright[0] - 10,
@@ -802,7 +802,7 @@ def detachAllclicked():
     stickcollidables()
 
 
-detachAllButton.doclicked = detachAllclicked
+detachAllButton.do_clicked = detachAllclicked
 
 StickModList = [changebutton, rotatebutton, changehorizontalbutton, changevertbutton, changeStickButton,
                 detachAllButton]
@@ -825,7 +825,7 @@ def changeMode():
     stickcollidables()
 
 
-changeModeButton.doclicked = changeMode
+changeModeButton.do_clicked = changeMode
 
 AxisModList = [changebutton, changeModeButton, rotatebutton]
 
@@ -847,7 +847,7 @@ def change_color_clicked():
         collidables.append(item)
 
 
-changecolorbutton.doclicked = change_color_clicked
+changecolorbutton.do_clicked = change_color_clicked
 
 BGModList.append(changecolorbutton)
 
@@ -994,7 +994,7 @@ while not done:
                                     collidables.remove(thing)
                         secondarybuttonmenulist.clear()
                     if collided.__class__ == ClickableOptionButton:
-                        check = collided.doclicked()
+                        check = collided.do_clicked()
                         if check.__class__ == GenericController or check.__class__ == LoadGenericController:
                             ActiveStick = check
                             if check.gamepad:
@@ -1018,7 +1018,7 @@ while not done:
                             for item in check:
                                 collidables.append(item)
                     elif collided.__class__ == FileBox:
-                        check = collided.doclicked()
+                        check = collided.do_clicked()
                         if check.__class__ == GenericController or check.__class__ == LoadGenericController:
                             ActiveStick = check
                             if check.gamepad:
@@ -1054,7 +1054,7 @@ while not done:
                             collidables.remove(thing)
                 secondarybuttonmenulist.clear()
             if check.__class__ != dict:
-                for item in filewindow.itemdict:
+                for item in filewindow.item_dict:
                     for thing in collidables:
                         if thing == item:
                             collidables.remove(item)
@@ -1080,7 +1080,7 @@ while not done:
                 if event.unicode == '\x08':
                     widgetCell.holding.updatetext(widgetCell.holding.text[:-1])
                 elif event.unicode == '\r':
-                    ActiveStick.background.setColor(widgetCell.holding.text)
+                    ActiveStick.background.set_color(widgetCell.holding.text)
                     widgetCell.holding = False
                 else:
                     widgetCell.holding.updatetext(widgetCell.holding.text + str(event.unicode))

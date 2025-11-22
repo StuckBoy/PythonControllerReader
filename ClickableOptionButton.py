@@ -9,7 +9,7 @@ class ClickableOptionButton:
         WINDOW.blit(self.image, self.rect)
 
     # MAKE MORE GENERIC, WILL NEVER NEED A CLICKABLE BUTTON FOR DRAWING CARD, THIS WAS WRITTEN FOR TESTING PURPOSES ONLY
-    def doclicked(self):
+    def do_clicked(self):
         return False
 
     def set_image(self, image):

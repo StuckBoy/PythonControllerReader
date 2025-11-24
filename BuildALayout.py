@@ -60,7 +60,7 @@ Unsure what this does, need more insight to quantify this naming convention
 """
 
 
-class HoldingCell():
+class HoldingCell:
     # TODO
     def __init__(self):
         self.holding = False
@@ -287,13 +287,13 @@ def save(filename=""):
 def load(filename=""):
     # Edge case
     if filename[-4:] == ".zip":
-        return loadzip(filename)
+        return load_zip(filename)
     else:  # Otherwise process
         return loadfile(filename)
 
 
 # TODO Zips aren't supported
-def loadzip(filename=""):
+def load_zip(filename=""):
     return False
 
 
@@ -462,7 +462,7 @@ def loadclicked(self):
 
 
 # TODO
-def LoadButtonDoClicked():
+def load_button_do_clicked():
     itemlist = filewindow.update_self("./layouts/", (position[0], position[1]))
 
     for item in itemlist:
@@ -477,35 +477,35 @@ def saveclicked(self):
 
 
 # TODO
-def NewFileBoxClicked(self):
+def new_file_box_clicked(self):
     return self
 
 
 # TODO
-def SaveButtonDoClicked():
+def save_button_do_clicked():
     itemlist = filewindow.update_self("./layouts/", (position[0], position[1]), "save")
 
     for item in itemlist:
         if item.text != "NEW":
             item.clickdummy = saveclicked
         else:
-            item.clickdummy = NewFileBoxClicked
+            item.clickdummy = new_file_box_clicked
 
     return itemlist
 
 
 # TODO
-def makeStick():
+def make_stick():
     emptystick = Stick(MakeStickButton.rect.x + 145, MakeStickButton.rect.y)
     print(emptystick)
-    if emptystick.controller == False:
+    if not emptystick.controller:
         if ActiveStick:
             emptystick.controller = ActiveStick
     return emptystick
 
 
 # TODO
-def reloadController():
+def reload_controller():
     if ActiveStick:
         if ActiveStick.gamepad:
             stick = LoadGenericController(ActiveStick.gamepad)
@@ -535,10 +535,10 @@ ReloadButton = ClickableOptionButton(0, 0, reloadimage)
 
 MakeStickButton = ClickableOptionButton(SaveButton.rect.x + (LoadButton.rect.x - SaveButton.rect.x) / 2,
                                         SaveButton.rect.y + 50, makestickimage)
-SaveButton.do_clicked = SaveButtonDoClicked
-LoadButton.do_clicked = LoadButtonDoClicked
-MakeStickButton.do_clicked = makeStick
-ReloadButton.do_clicked = reloadController
+SaveButton.do_clicked = save_button_do_clicked
+LoadButton.do_clicked = load_button_do_clicked
+MakeStickButton.do_clicked = make_stick
+ReloadButton.do_clicked = reload_controller
 
 collidables.append(SaveButton)
 collidables.append(LoadButton)
@@ -564,11 +564,11 @@ def changeButtonImage():
         morph.pressed = pressed
         morph.load()
 
-    stickcollidables()
+    stick_collidables()
 
 
 # TODO
-def ChangeAssetImageButtonDoClicked(self):
+def change_asset_image_button_do_clicked(self):
     num = self.changelist.index(self.path)
     if num + 1 < len(self.changelist):
         num = num + 1
@@ -578,11 +578,11 @@ def ChangeAssetImageButtonDoClicked(self):
     newpath = self.changelist[num]
     self.setter(newpath)
     self.path = newpath
-    ChangeButtonDoClicked()
+    change_button_do_clicked()
 
 
 # TODO
-def ChangeButtonDoClicked():
+def change_button_do_clicked():
     morph = widgetCell.holding
     # grab image asset dict:
     # image asset list should include:
@@ -640,30 +640,30 @@ def ChangeButtonDoClicked():
         button.setter = changefunction
         button.parent = morph
 
-        button.clickdummy = ChangeAssetImageButtonDoClicked
-        imgbutton.clickdummy = ChangeAssetImageButtonDoClicked
+        button.clickdummy = change_asset_image_button_do_clicked
+        imgbutton.clickdummy = change_asset_image_button_do_clicked
 
         secondarybuttonmenulist.append(button)
         secondarybuttonmenulist.append(imgbutton)
     for item in secondarybuttonmenulist:
         collidables.append(item)
-    stickcollidables()
+    stick_collidables()
     return False
 
 
 # TODO
-def rotateButtonImage():
+def rotate_button_image():
     morph = widgetCell.holding
     morph.Rotate()
-    stickcollidables()
+    stick_collidables()
 
 
 ChangeImage = pygame.image.load('assets/changebutton.png')
 changebutton = ClickableOptionButton(x + 20, y - ChangeImage.get_rect().height, ChangeImage)
-changebutton.do_clicked = ChangeButtonDoClicked
+changebutton.do_clicked = change_button_do_clicked
 RotateImage = pygame.image.load('assets/rotatebutton.png')
 rotatebutton = ClickableOptionButton(x + 40 + 135, y - 50, RotateImage)
-rotatebutton.do_clicked = rotateButtonImage
+rotatebutton.do_clicked = rotate_button_image
 ButtonModList = [changebutton, rotatebutton]
 
 horizontalaxis = pygame.image.load('assets/horizontalaxisbutton.png')
@@ -672,26 +672,26 @@ changehorizontalbutton = ClickableOptionButton(changebutton.rect.x, changebutton
 
 
 # TODO
-def addButtontoController(Core, buttonnum):
+def add_button_to_controller(Core, buttonnum):
     buttonadd = Button(buttonnum, Core.x, Core.y - (Core.stickunpressed.get_rect().bottomright[1] * 2), ActiveStick)
     buttonadd.rotate()
     ActiveStick.buttondict[buttonnum] = buttonadd
 
 
 # TODO
-def addAxistoController(Core, Axisnum):
+def add_axis_to_controller(Core, Axisnum):
     axisadd = TriggerAxis(Core.x, Core.y - (Core.stickunpressed.get_rect().bottomright[1] * 2), Axisnum, ActiveStick)
     axisadd.rotate()
     ActiveStick.axisdict[Axisnum] = axisadd
 
 
 # TODO
-def changehorizontalaxis(self):
+def change_horizontal_axis(self):
     numswap = self.trigger.axis
     if self.Core.horaxis >= 0:
         temp = self.Core.horaxis
         self.Core.horaxis = numswap
-        addAxistoController(self.Core, temp)
+        add_axis_to_controller(self.Core, temp)
     else:
         self.Core.horaxis = numswap
     if ActiveStick:
@@ -702,17 +702,17 @@ def changehorizontalaxis(self):
             if ActiveStick.axisdict[item] == self.trigger:
                 del ActiveStick.axisdict[item]
         del tempdict
-    stickcollidables()
+    stick_collidables()
 
 
 # TODO
-def changehorizontalclicked():
+def change_horizontal_clicked():
     action = ModAction(widgetCell.holding, TriggerAxis(), "CLICK DESIRED HORIZONTAL AXIS")
-    ModAction.do_action = changehorizontalaxis
+    ModAction.do_action = change_horizontal_axis
     return action
 
 
-changehorizontalbutton.do_clicked = changehorizontalclicked
+changehorizontalbutton.do_clicked = change_horizontal_clicked
 
 vertaxis = pygame.image.load('assets/vertaxisbutton.png')
 
@@ -720,12 +720,12 @@ changevertbutton = ClickableOptionButton(rotatebutton.rect.x, changehorizontalbu
 
 
 # TODO
-def changevertaxis(self):
+def change_vertical_axis(self):
     numswap = self.trigger.axis
     if self.Core.vertaxis >= 0:
         temp = self.Core.vertaxis
         self.Core.vertaxis = numswap
-        addAxistoController(self.Core, temp)
+        add_axis_to_controller(self.Core, temp)
     else:
         self.Core.vertaxis = numswap
     if ActiveStick:
@@ -736,17 +736,17 @@ def changevertaxis(self):
             if ActiveStick.axisdict[item] == self.trigger:
                 del ActiveStick.axisdict[item]
         del tempdict
-    stickcollidables()
+    stick_collidables()
 
 
 # TODO
-def changevertclicked():
+def change_vertical_clicked():
     action = ModAction(widgetCell.holding, TriggerAxis(), "CLICK DESIRED VERTICAL AXIS")
-    ModAction.do_action = changevertaxis
+    ModAction.do_action = change_vertical_axis
     return action
 
 
-changevertbutton.do_clicked = changevertclicked
+changevertbutton.do_clicked = change_vertical_clicked
 
 changeButtonImage = pygame.image.load('assets/addbutton.png')
 changeStickButton = ClickableOptionButton(changevertbutton.rect.x - 12, changehorizontalbutton.rect.y - 50,
@@ -754,12 +754,12 @@ changeStickButton = ClickableOptionButton(changevertbutton.rect.x - 12, changeho
 
 
 # TODO
-def changestickbutton(self):
+def change_stick_button(self):
     numswap = self.trigger.buttonnum
     if self.Core.buttonnum >= 0:
         temp = self.Core.buttonnum
         self.Core.buttonnum = numswap
-        addButtontoController(self.Core, temp)
+        add_button_to_controller(self.Core, temp)
     else:
         self.Core.buttonnum = numswap
     if ActiveStick:
@@ -769,17 +769,17 @@ def changestickbutton(self):
         for item in tempdict:
             if ActiveStick.buttondict[item] == self.trigger:
                 del ActiveStick.buttondict[item]
-    stickcollidables()
+    stick_collidables()
 
 
 # TODO
-def changebuttonclicked():
+def change_button_clicked():
     action = ModAction(widgetCell.holding, Button(), "CLICK DESIRED BUTTON")
-    ModAction.do_action = changestickbutton
+    ModAction.do_action = change_stick_button
     return action
 
 
-changeStickButton.do_clicked = changebuttonclicked
+changeStickButton.do_clicked = change_button_clicked
 
 DropSettingsImage = pygame.image.load('assets/dropsettings.png')
 detachAllButton = ClickableOptionButton(changeStickButton.rect.x - DropSettingsImage.get_rect().bottomright[0] - 10,
@@ -787,7 +787,7 @@ detachAllButton = ClickableOptionButton(changeStickButton.rect.x - DropSettingsI
 
 
 # TODO
-def detachAllclicked():
+def detach_all_clicked():
     if widgetCell.holding:
         items_to_add = widgetCell.holding.dropItems()
     else:
@@ -799,10 +799,10 @@ def detachAllclicked():
         else:
             ActiveStick.buttondict[item.buttonnum] = item
 
-    stickcollidables()
+    stick_collidables()
 
 
-detachAllButton.do_clicked = detachAllclicked
+detachAllButton.do_clicked = detach_all_clicked
 
 StickModList = [changebutton, rotatebutton, changehorizontalbutton, changevertbutton, changeStickButton,
                 detachAllButton]
@@ -812,7 +812,7 @@ changeModeButton = ClickableOptionButton(rotatebutton.rect.x - 146, rotatebutton
 
 
 # TODO
-def changeMode():
+def change_mode():
     morph = widgetCell.holding
     if morph.__class__ == TriggerAxis:
         if morph.mode == 'axis':
@@ -822,10 +822,10 @@ def changeMode():
         morph.ModeAdjust()
         morph.load()
 
-    stickcollidables()
+    stick_collidables()
 
 
-changeModeButton.do_clicked = changeMode
+changeModeButton.do_clicked = change_mode
 
 AxisModList = [changebutton, changeModeButton, rotatebutton]
 
@@ -853,7 +853,7 @@ BGModList.append(changecolorbutton)
 
 
 # TODO
-def CollisionCheck(mousepos, collisionbox):
+def collision_check(mousepos, collisionbox):
     mousex = mousepos[0]
     mousey = mousepos[1]
 
@@ -865,7 +865,7 @@ def CollisionCheck(mousepos, collisionbox):
 
 
 # TODO
-def stickcollidables():
+def stick_collidables():
     collidables.append(ActiveStick.background)
     for item in ActiveStick.buttondict:
         rectangle = ActiveStick.buttondict[item].off.get_rect()
@@ -933,14 +933,14 @@ while not done:
                 background.rect.y = y
                 ActiveStick.background = background
                 name = ActiveStick.gamepad.get_name()
-                stickcollidables()
+                stick_collidables()
                 clear_text()
             elif ActiveStick.gamepad == False:
                 newname = joysticks[event.instance_id].get_name()
                 if name == newname:
                     ActiveStick.gamepad = joysticks[event.instance_id]
                     ActiveStick.resetListItems()
-                    stickcollidables()
+                    stick_collidables()
                     name = ActiveStick.gamepad.get_name()
                     clear_text()
                 else:
@@ -950,7 +950,7 @@ while not done:
                     background.rect.y = y
                     ActiveStick.background = background
                     name = ActiveStick.gamepad.get_name()
-                    stickcollidables()
+                    stick_collidables()
                     clear_text()
 
         # TODO
@@ -984,7 +984,7 @@ while not done:
             check = False
             for i in range(len(collidables) - 1, -1, -1):
                 item = collidables[i]
-                touch = CollisionCheck(position, item.rect)
+                touch = collision_check(position, item.rect)
                 if touch:
                     collided = item
                     if item not in secondarybuttonmenulist:
@@ -1002,7 +1002,7 @@ while not done:
                                 clear_text()
                             else:
                                 name = 'UNKNOWN'
-                            stickcollidables()
+                            stick_collidables()
                         if check.__class__ == Stick:
                             if ActiveStick:
                                 widgetCell.holdItem(check)
@@ -1010,7 +1010,7 @@ while not done:
                                 widgetCell.update()
 
                                 ActiveStick.sticklist.append(check)
-                                stickcollidables()
+                                stick_collidables()
                         if check.__class__ == ModAction:
                             currentAction.action = check
 
@@ -1026,7 +1026,7 @@ while not done:
                                 clear_text()
                             else:
                                 name = 'UNKNOWN'
-                            stickcollidables()
+                            stick_collidables()
                         if check.__class__ == FileBox:
                             filewindow.state = True
                             widgetCell.holding = check

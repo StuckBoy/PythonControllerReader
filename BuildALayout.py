@@ -255,7 +255,7 @@ def save(filename=""):
         # For each hat
         for hat in hatdict:
             # (number,xposition,yposition,rotation,onimage,offimage,backgroundimage)
-            number = str(hatdict[hat].hatnumber)
+            number = str(hatdict[hat].hat_number)
             xposition = str(hatdict[hat].x - x)
             yposition = str(hatdict[hat].y - y)
             onimage = str(hatdict[hat].defaultpressed)
@@ -463,7 +463,7 @@ def loadclicked(self):
 
 # TODO
 def LoadButtonDoClicked():
-    itemlist = filewindow.UpdateSelf("./layouts/", (position[0], position[1]))
+    itemlist = filewindow.update_self("./layouts/", (position[0], position[1]))
 
     for item in itemlist:
         item.clickdummy = loadclicked
@@ -483,7 +483,7 @@ def NewFileBoxClicked(self):
 
 # TODO
 def SaveButtonDoClicked():
-    itemlist = filewindow.UpdateSelf("./layouts/", (position[0], position[1]), "save")
+    itemlist = filewindow.update_self("./layouts/", (position[0], position[1]), "save")
 
     for item in itemlist:
         if item.text != "NEW":
@@ -899,7 +899,7 @@ def stickcollidables():
             collidables.append(item)
 
     for item in ActiveStick.hatdict:
-        rectangle3 = ActiveStick.hatdict[item].assetdict['background'][1].get_rect()
+        rectangle3 = ActiveStick.hatdict[item].asset_dict['background'][1].get_rect()
         ActiveStick.hatdict[item].rect = rectangle3
         ActiveStick.hatdict[item].rect.x = ActiveStick.hatdict[item].x
         ActiveStick.hatdict[item].rect.y = ActiveStick.hatdict[item].y

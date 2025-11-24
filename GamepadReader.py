@@ -17,7 +17,15 @@ pygame.init()
 joysticks = {}
 for i in range(pygame.joystick.get_count()):
     joysticks[i] = pygame.joystick.Joystick(i)
+
 font = pygame.font.Font('SuperMystery.ttf', 32)
+"""
+The typeface and size used throughout this file.
+"""
+color = (149, 75, 220)
+"""
+The color used to render text with throughout the application.
+"""
 background = pygame.image.load("assets/Background.png")
 rect = background.get_rect()
 x = int(rect.bottomright[0])
@@ -28,7 +36,7 @@ clock = pygame.time.Clock()
 filewindow = FileWindow()
 
 
-class APMCounter():
+class APMCounter:
     valuelist = []
     timepassed = 0
     actionperlastminute = 0
@@ -38,7 +46,7 @@ class APMCounter():
 
     def __init__(self, target):
         self.ValueTarget = target
-        self.text = font.render('APLM: ' + str(self.actionperlastminute), True, (149, 75, 220))
+        self.text = font.render('APLM: ' + str(self.actionperlastminute), True, color)
         rect = self.text.get_rect()
         self.width = rect.width
         self.height = rect.height
@@ -59,7 +67,7 @@ class APMCounter():
         self.averageapm = int(self.valuelist[length - 1] / (self.timepassed / 3600))
 
     def draw(self, WINDOW):
-        self.text = font.render('APLM: ' + str(self.actionperlastminute), True, (149, 75, 220))
+        self.text = font.render('APLM: ' + str(self.actionperlastminute), True, color)
         WINDOW.blit(self.text, (int(x / 2) - int(self.width / 2), y - self.height))
 
     def resetCounter(self):
@@ -484,7 +492,7 @@ def createlogfile():
         if len(hatdict[item].name) > 0:
             name = hatdict[item].name
         else:
-            name = hatdict[item].hatnumber
+            name = hatdict[item].hat_number
         # name = hatdict[item].name
         file.write("Hat " + str(name) + ": " + str(var) + "\n")
     file.write("STICKS *************\n")
@@ -537,7 +545,7 @@ def load_clicked(self):
 
 
 def load_button_do_clicked():
-    itemlist = filewindow.UpdateSelf("./layouts/", (position[0], position[1]))
+    itemlist = filewindow.update_self("./layouts/", (position[0], position[1]))
 
     for item in itemlist:
         item.clickdummy = load_clicked

@@ -2,27 +2,57 @@ import os
 
 from pygame import image, transform, draw, color
 
+from constants import COLOR_WHITE
+
+# Enables monitoring of inputs while unfocused (DO NOT REMOVE THIS. EVER.)
 os.environ['SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS'] = '1'
 
 
-class Background():
-    def __init__(self, bgpath="", bgcolor=""):
-        self.path = bgpath
+class Background:
+    """
+    Defines the background drawn behind the controller and inputs within the
+    window.
+    """
+
+    def __init__(self, bg_path="", bg_color=""):
+        self.path = bg_path
         self.image = image.load(self.path)
         self.rect = self.image.get_rect()
-        if bgcolor == "":
-            bgcolor = "#ffffff"
-        self.color = bgcolor
+        if bg_color == "":  # Default to white if there isn't a color declared
+            bg_color = COLOR_WHITE
+        self.color = bg_color
 
-    def set_color(self, colorkey):
-        self.color = colorkey
+    def set_color(self, color_key):
+        """
+        Reassigns the color used to fill in the background.
+        :param color_key: The color we wish to use. (TODO Is this in hex? RGB? Anything?)
+        """
+        self.color = color_key
 
-    def draw(self, WINDOW):
-        draw.rect(WINDOW, color.Color(self.color), self.rect)
-        WINDOW.blit(self.image, self.rect)
+    def draw(self, window):
+        draw.rect(window, color.Color(self.color), self.rect)
+        window.blit(self.image, self.rect)
+
+
+"""
+Here begins the definitions of the following objects (in order of appearance):
+- Button
+- TriggerAxis
+- Stick
+- Hat
+
+Our goals are the following:
+- Identify similarities between these 4 classes
+- Construct a base class from which each can inherit behaviors that appear everywhere
+- Extend that base class and implement missing functionality/abstract behaviors
+- Remove 4/5 of the total classes defined within this file.
+"""
 
 
 class Button:
+    """
+    TODO
+    """
     unpressed = "./buttons/unpressed.png"
     pressed = "./buttons/pressed.png"
     off = image.load(unpressed)
@@ -43,16 +73,16 @@ class Button:
         self.assetdict["pressed"] = self.pressed, self.on, self.set_pressed
         self.assetdict["unpressed"] = self.unpressed, self.off, self.set_unpressed
 
-    def set_pressed(self, PATHNAME=''):
-        if PATHNAME == '':
-            PATHNAME = self.pressed
-        self.pressed = PATHNAME
+    def set_pressed(self, path=''):
+        if path == '':
+            path = self.pressed
+        self.pressed = path
         self.load()
 
-    def set_unpressed(self, PATHNAME=''):
-        if PATHNAME == '':
-            PATHNAME = self.unpressed
-        self.unpressed = PATHNAME
+    def set_unpressed(self, path=''):
+        if path == '':
+            path = self.unpressed
+        self.unpressed = path
         self.load()
 
     def update_self(self):
@@ -76,8 +106,8 @@ class Button:
                 return True
             return False
 
-    def draw(self, WINDOW):
-        WINDOW.blit(self.image, (self.x, self.y))
+    def draw(self, window):
+        window.blit(self.image, (self.x, self.y))
 
     def load(self):
         self.off = image.load(self.unpressed)
@@ -103,6 +133,9 @@ class Button:
 
 
 class TriggerAxis:
+    """
+    TODO
+    """
     bar_image = "./Axis/triggerbar.png"
     paddleimage = "./Axis/paddlebar.png"
     pressed = "./Axis/buttons/pressed.png"
@@ -139,28 +172,28 @@ class TriggerAxis:
         self.assetdict["bar"] = self.bar_image, self.bar, self.setbar
         self.assetdict["paddle"] = self.paddleimage, self.paddle, self.set_paddle
 
-    def setpressed(self, PATHNAME=''):
-        if PATHNAME == '':
-            PATHNAME = self.pressed
-        self.pressed = PATHNAME
+    def setpressed(self, path=''):
+        if path == '':
+            path = self.pressed
+        self.pressed = path
         self.load()
 
-    def setunpressed(self, PATHNAME=''):
-        if PATHNAME == '':
-            PATHNAME = self.unpressed
-        self.unpressed = PATHNAME
+    def setunpressed(self, path=''):
+        if path == '':
+            path = self.unpressed
+        self.unpressed = path
         self.load()
 
-    def setbar(self, PATHNAME=''):
-        if PATHNAME == '':
-            PATHNAME = self.bar_image
-        self.bar_image = PATHNAME
+    def setbar(self, path=''):
+        if path == '':
+            path = self.bar_image
+        self.bar_image = path
         self.load()
 
-    def set_paddle(self, PATHNAME=''):
-        if PATHNAME == '':
-            PATHNAME = self.paddleimage
-        self.paddleimage = PATHNAME
+    def set_paddle(self, path=''):
+        if path == '':
+            path = self.paddleimage
+        self.paddleimage = path
         self.load()
 
     def update_self(self):
@@ -203,7 +236,7 @@ class TriggerAxis:
             WINDOW.blit(self.bar, (self.x, self.y))
             WINDOW.blit(self.paddle, (self.x - 4, (self.y + (100 * self.ymod))))
 
-    def draw_button_mode(self, WINDOW):
+    def draw_button_mode(self, window):
         if not self.activestate:
             if self.button != self.unpressedimage:
                 self.button = self.unpressedimage
@@ -211,7 +244,7 @@ class TriggerAxis:
             if self.button != self.pressedimage:
                 self.button = self.pressedimage
 
-        WINDOW.blit(self.button, (self.x, self.y))
+        window.blit(self.button, (self.x, self.y))
 
     def load(self):
         return
@@ -243,6 +276,9 @@ class TriggerAxis:
 
 
 class Stick:
+    """
+    TODO
+    """
     pressed = "./sticks/stickpressed.png"
     unpressed = "./sticks/stickunpressed.png"
     stickunpressed = image.load(unpressed)
@@ -275,27 +311,27 @@ class Stick:
         self.assetdict["pressed"] = self.pressed, self.stickpressed, self.set_pressed
         self.assetdict["unpressed"] = self.unpressed, self.stickunpressed, self.set_unpressed
 
-    def set_pressed(self, PATHNAME=''):
-        if PATHNAME == '':
-            PATHNAME = self.pressed
-        self.pressed = PATHNAME
+    def set_pressed(self, path=''):
+        if path == '':
+            path = self.pressed
+        self.pressed = path
         self.load()
 
-    def set_unpressed(self, PATHNAME=''):
-        if PATHNAME == '':
-            PATHNAME = self.unpressed
-        self.unpressed = PATHNAME
+    def set_unpressed(self, path=''):
+        if path == '':
+            path = self.unpressed
+        self.unpressed = path
         self.load()
 
     def update_self(self):
-        if self.buttonnum >= 0:
+        if self.buttonnum >= 0:  # TODO What does 0 mean in this context?
             if self.controller.gamepad:
                 if self.buttonnum < self.controller.gamepad.get_numbuttons():
                     self.pressedstate = self.controller.gamepad.get_button(self.buttonnum)
             else:
-                self.pressedstate = 0
+                self.pressedstate = 0  # TODO What does 0 mean in this context?
         action = False
-        if self.pressedstate == 0:
+        if self.pressedstate == 0:  # TODO What does 0 mean in this context?
             self.image = self.stickunpressed
             action = False
         else:
@@ -306,41 +342,41 @@ class Stick:
             else:
                 action = False
         if self.controller.gamepad:
-            if self.vertaxis >= 0:
+            if self.vertaxis >= 0:  # TODO What does 0 mean in this context?
                 if self.vertaxis < self.controller.gamepad.get_numaxes():
                     self.vertstate = self.controller.gamepad.get_axis(self.vertaxis)
                 else:
-                    self.vertstate = 0
+                    self.vertstate = 0  # TODO What does 0 mean in this context?
                 self.vertmod = (self.rect.height / 2) * self.vertstate
-            if self.horaxis >= 0:
+            if self.horaxis >= 0:  # TODO What does 0 mean in this context?
                 if self.horaxis < self.controller.gamepad.get_numaxes():
                     self.horstate = self.controller.gamepad.get_axis(self.horaxis)
                 else:
-                    self.horstate = 0
+                    self.horstate = 0  # TODO What does 0 mean in this context?
             self.hormod = (self.rect.width / 2) * self.horstate
 
         if not self.horactive:
-            if abs(self.hormod) > 2:
+            if abs(self.hormod) > 2:  # TODO What does 2 mean in this context?
                 self.horactive = True
                 self.moveactions = self.moveactions + 1
                 self.controller.actioncount = self.controller.actioncount + 1
 
-        if abs(self.hormod) < 2:
+        if abs(self.hormod) < 2:  # TODO What does 2 mean in this context?
             self.horactive = False
 
         if not self.vertactive:
-            if abs(self.vertmod) > 2:
+            if abs(self.vertmod) > 2:  # TODO What does 2 mean in this context?
                 self.vertactive = True
                 self.moveactions = self.moveactions + 1
                 self.controller.actioncount = self.controller.actioncount + 1
 
-        if abs(self.vertmod) < 2:
+        if abs(self.vertmod) < 2:  # TODO What does 2 mean in this context?
             self.vertactive = False
 
         return action
 
-    def draw(self, WINDOW):
-        WINDOW.blit(self.image, (self.x + self.hormod, self.y + self.vertmod))
+    def draw(self, window):
+        window.blit(self.image, (self.x + self.hormod, self.y + self.vertmod))
 
     def load(self):
         self.stickpressed = image.load(self.pressed)
@@ -351,9 +387,9 @@ class Stick:
         self.assetdict["unpressed"] = self.unpressed, self.stickunpressed, self.set_unpressed
 
     def rotate(self):
-        if self.rotate < 270:
+        if self.rotate < 270:  # If we have at least one more rotation left
             self.rotate = self.rotate + 90
-        else:
+        else:  # Reset orientation
             self.rotate = 0
         self.load()
 
@@ -371,20 +407,23 @@ class Stick:
         droplist = []
         axis = []
 
-        if self.vertaxis >= 0:
+        if self.vertaxis >= 0:  # TODO What does 0 mean in this context?
+            # TODO How can this instantiation be done more cleanly?
             axisadd = TriggerAxis(self.x, self.y - (self.stickunpressed.get_rect().bottomright[1]), self.vertaxis,
                                   self.controller)
             axisadd.rotate()
             axis.append(axisadd)
 
-        if self.horaxis >= 0:
+        if self.horaxis >= 0:  # TODO What does 0 mean in this context?
+            # TODO How can this instantiation be done more cleanly?
             axisadd = TriggerAxis(self.x, self.y - (self.stickunpressed.get_rect().bottomright[1] * 2), self.horaxis,
                                   self.controller)
             axisadd.rotate()
             axis.append(axisadd)
 
         droplist.append(axis)
-        if self.buttonnum >= 0:
+        if self.buttonnum >= 0:  # TODO What does 0 mean in this context?
+            # TODO How can this instantiation be done more cleanly?
             buttonadd = Button(self.buttonnum, self.x, (self.y - self.stickunpressed.get_rect().bottomright[1] * 3),
                                self.controller)
             droplist.append(buttonadd)
@@ -397,6 +436,9 @@ class Stick:
 
 
 class Hat:
+    """
+    TODO
+    """
     background = './hats/hatbackground.png'
     defaultpressed = './hats/pressed.png'
     defaultunpressed = './hats/unpressed.png'
@@ -408,10 +450,10 @@ class Hat:
     directions = {(0, 0): "center", (0, 1): "N", (0, -1): "S", (1, 0): "E", (1, -1): "SE", (1, 1): "NE", (-1, 0): "W",
                   (-1, 1): "NW", (-1, -1): "SW"}
 
-    def __init__(self, hatnum=-1, x=-1, y=-1, controller=False, name="", mode="hat"):
-        self.assetdict = {}
+    def __init__(self, hat_num=-1, x=-1, y=-1, controller=False, name="", mode="hat"):
+        self.asset_dict = {}
         self.ModeDict = {}
-        self.hatnumber = hatnum
+        self.hat_number = hat_num
         # x and y will be the top left coordinate for the background
         self.x = x
         self.y = y
@@ -455,8 +497,8 @@ class Hat:
         self.setdefaults()
 
     def setdefaults(self):
-        del self.assetdict
-        self.assetdict = {}
+        del self.asset_dict
+        self.asset_dict = {}
         for item in self.setlist:
             item()
         self.load()
@@ -464,97 +506,97 @@ class Hat:
     def setcenter(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.centerdefault
-        self.assetdict["center"] = PATHNAME, image.load(PATHNAME), self.setcenter
-        self.stateimage = self.assetdict['center'][1]
+        self.asset_dict["center"] = PATHNAME, image.load(PATHNAME), self.setcenter
+        self.stateimage = self.asset_dict['center'][1]
         self.staterect = self.stateimage.get_rect()
 
     def setbackground(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.background
-        self.assetdict["background"] = PATHNAME, image.load(PATHNAME), self.setbackground
-        self.backgroundrect = self.assetdict['background'][1].get_rect()
+        self.asset_dict["background"] = PATHNAME, image.load(PATHNAME), self.setbackground
+        self.backgroundrect = self.asset_dict['background'][1].get_rect()
         self.backgroundcenterx = self.backgroundrect[2] / 2
         self.centery = self.backgroundrect[3] / 2
 
     def setNPressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultpressed
-        self.assetdict["Npressed"] = PATHNAME, image.load(PATHNAME), self.setNPressed
+        self.asset_dict["Npressed"] = PATHNAME, image.load(PATHNAME), self.setNPressed
 
     def setNUnpressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultunpressed
-        self.assetdict["Nunpressed"] = PATHNAME, image.load(PATHNAME), self.setNUnpressed
+        self.asset_dict["Nunpressed"] = PATHNAME, image.load(PATHNAME), self.setNUnpressed
 
     def setSPressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultpressed
-        self.assetdict["Spressed"] = PATHNAME, image.load(PATHNAME), self.setSPressed
+        self.asset_dict["Spressed"] = PATHNAME, image.load(PATHNAME), self.setSPressed
 
     def setSUnpressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultunpressed
-        self.assetdict["Sunpressed"] = PATHNAME, image.load(PATHNAME), self.setSUnpressed
+        self.asset_dict["Sunpressed"] = PATHNAME, image.load(PATHNAME), self.setSUnpressed
 
     def setWPressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultpressed
-        self.assetdict["Wpressed"] = PATHNAME, image.load(PATHNAME), self.setWPressed
+        self.asset_dict["Wpressed"] = PATHNAME, image.load(PATHNAME), self.setWPressed
 
     def setWUnpressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultunpressed
-        self.assetdict["Wunpressed"] = PATHNAME, image.load(PATHNAME), self.setWUnpressed
+        self.asset_dict["Wunpressed"] = PATHNAME, image.load(PATHNAME), self.setWUnpressed
 
     def setEPressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultpressed
-        self.assetdict["Epressed"] = PATHNAME, image.load(PATHNAME), self.setEPressed
+        self.asset_dict["Epressed"] = PATHNAME, image.load(PATHNAME), self.setEPressed
 
     def setEUnpressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultunpressed
-        self.assetdict["Eunpressed"] = PATHNAME, image.load(PATHNAME), self.setEUnpressed
+        self.asset_dict["Eunpressed"] = PATHNAME, image.load(PATHNAME), self.setEUnpressed
 
     def setNEPressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultpressed
-        self.assetdict["NEpressed"] = PATHNAME, image.load(PATHNAME), self.setNEPressed
+        self.asset_dict["NEpressed"] = PATHNAME, image.load(PATHNAME), self.setNEPressed
 
     def setNEUnpressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultunpressed
-        self.assetdict["NEunpressed"] = PATHNAME, image.load(PATHNAME), self.setNEUnpressed
+        self.asset_dict["NEunpressed"] = PATHNAME, image.load(PATHNAME), self.setNEUnpressed
 
     def setNWPressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultpressed
-        self.assetdict["NWpressed"] = PATHNAME, image.load(PATHNAME), self.setNWPressed
+        self.asset_dict["NWpressed"] = PATHNAME, image.load(PATHNAME), self.setNWPressed
 
     def setNWUnpressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultunpressed
-        self.assetdict["NWunpressed"] = PATHNAME, image.load(PATHNAME), self.setNWUnpressed
+        self.asset_dict["NWunpressed"] = PATHNAME, image.load(PATHNAME), self.setNWUnpressed
 
     def setSWPressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultpressed
-        self.assetdict["SWpressed"] = PATHNAME, image.load(PATHNAME), self.setSWPressed
+        self.asset_dict["SWpressed"] = PATHNAME, image.load(PATHNAME), self.setSWPressed
 
     def setSWUnpressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultunpressed
-        self.assetdict["SWunpressed"] = PATHNAME, image.load(PATHNAME), self.setSWUnpressed
+        self.asset_dict["SWunpressed"] = PATHNAME, image.load(PATHNAME), self.setSWUnpressed
 
     def setSEPressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultpressed
-        self.assetdict["SEpressed"] = PATHNAME, image.load(PATHNAME), self.setSEPressed
+        self.asset_dict["SEpressed"] = PATHNAME, image.load(PATHNAME), self.setSEPressed
 
     def setSEUnpressed(self, PATHNAME=''):
         if PATHNAME == '':
             PATHNAME = self.defaultunpressed
-        self.assetdict["SEunpressed"] = PATHNAME, image.load(PATHNAME), self.setSEUnpressed
+        self.asset_dict["SEunpressed"] = PATHNAME, image.load(PATHNAME), self.setSEUnpressed
 
     def changeMode(self, mode):
         # self.ModeDict['hat'] = self.HatModeSetList, self.updateHatImage(), self.drawHatMode()
@@ -570,15 +612,15 @@ class Hat:
 
     def UpdateSelf(self):
         action = False
-        if self.hatnumber >= 0:
+        if self.hat_number >= 0:
             if self.controller:
                 if self.controller.gamepad:
                     length = self.controller.gamepad.get_numhats()
-                    if length > self.hatnumber > -1:
-                        if self.state != self.controller.gamepad.get_hat(self.hatnumber) and self.state != (0, 0):
+                    if length > self.hat_number > -1:
+                        if self.state != self.controller.gamepad.get_hat(self.hat_number) and self.state != (0, 0):
                             action = True
                             self.actions = self.actions + 1
-                        self.state = self.controller.gamepad.get_hat(self.hatnumber)
+                        self.state = self.controller.gamepad.get_hat(self.hat_number)
                     else:
                         self.state = (0, 0)
         else:
@@ -603,10 +645,10 @@ class Hat:
         backgroundrectx = self.backgroundrect[2]
         backgroundrecty = self.backgroundrect[3]
         if self.state == (0, 0):
-            self.stateimage = self.assetdict['center'][1]
+            self.stateimage = self.asset_dict['center'][1]
         else:
             imgkey = str(self.directions[self.state]) + 'pressed'
-            self.stateimage = self.assetdict[imgkey][1]
+            self.stateimage = self.asset_dict[imgkey][1]
             if xstate != 0:
                 self.rotatemod = self.rotatemod - (90 * xstate)
             if ystate != 0:
@@ -647,15 +689,16 @@ class Hat:
         return
 
     def drawHatMode(self, WINDOW):
-        WINDOW.blit(self.assetdict['background'][1], (self.x, self.y))
+        WINDOW.blit(self.asset_dict['background'][1], (self.x, self.y))
         WINDOW.blit(self.stateimage, (self.imagex, self.imagey))
 
     def drawQuadMode(self, WINDOW):
         WINDOW.blit()
 
     def load(self):
-        for item in self.assetdict:
-            self.assetdict[item] = self.assetdict[item][0], image.load(self.assetdict[item][0]), self.assetdict[item][2]
+        for item in self.asset_dict:
+            self.asset_dict[item] = self.asset_dict[item][0], image.load(self.asset_dict[item][0]), \
+                self.asset_dict[item][2]
         self.updateImage()
 
     def ModeAdjust(self):

@@ -4,6 +4,13 @@ from pygame import draw, font
 
 font.init()
 FONT = font.Font('SuperMystery.ttf', 11)
+"""
+The typeface and size used for font rendering throughout the file.
+"""
+default_color = (75, 200, 200)
+"""
+The default color used throughout the file to render text.
+"""
 
 
 class ColorBox:
@@ -13,7 +20,7 @@ class ColorBox:
 
     def __init__(self):
         self.text = "#rrggbb"
-        self.textitem = FONT.render(self.text, True, (75, 200, 200))
+        self.textitem = FONT.render(self.text, True, default_color)
         self.rect = self.textitem.get_rect()
 
     ##THIS IS ABSOLUTELY GENIUS RIGHT HERE
@@ -25,7 +32,7 @@ class ColorBox:
 
     def updatetext(self, new):
         self.text = new
-        self.textitem = FONT.render(self.text, True, (75, 200, 200))
+        self.textitem = FONT.render(self.text, True, default_color)
         rect = self.textitem.get_rect()
         rect.x = self.rect.x
         rect.y = self.rect.y
@@ -54,7 +61,7 @@ class FileBox:
 
     def updatetext(self, new):
         self.text = new
-        self.textitem = FONT.render(self.text, True, (75, 200, 200))
+        self.textitem = FONT.render(self.text, True, default_color)
         rect = self.textitem.get_rect()
         rect.x = self.rect.x
         rect.y = self.rect.y
@@ -84,7 +91,7 @@ class FileWindow:
                 biggest = item.rect.width
         self.width = biggest + 4
 
-    def UpdateSelf(self, directory=False, coords=(), mode=False):
+    def update_self(self, directory=False, coords=(), mode=False):
         self.height = 0
         self.width = 0
         self.x, self.y = coords[0], coords[1]
@@ -94,7 +101,7 @@ class FileWindow:
             filelist = listdir(directory)
             buffer = 2
             for item in filelist:
-                textbox = FONT.render(str(item), True, (75, 200, 200))
+                textbox = FONT.render(str(item), True, default_color)
                 rect = textbox.get_rect()
                 addheight = rect.height
                 rect.x = self.x + 2
@@ -107,8 +114,9 @@ class FileWindow:
                     self.width = width
                 self.item_dict[box] = rect
 
+            # TODO Related to saving, internals can probably be unified with the loop above for reduced complexity
             if self.mode == "save":
-                textbox = FONT.render("NEW", True, (75, 200, 200))
+                textbox = FONT.render("NEW", True, default_color)
                 rect = textbox.get_rect()
                 addheight = rect.height
                 rect.x = self.x + 2
@@ -120,10 +128,10 @@ class FileWindow:
                     self.width = width
                 self.item_dict[box] = rect
 
-            buffer = buffer + 2
+            buffer = buffer + 2  # TODO What does adding 2 do here?
             self.height = buffer
-            self.width = self.width + 4
-            self.state = True
+            self.width = self.width + 4  # TODO What does adding 4 do here?
+            self.state = True  # TODO What's the difference between a true and false state?
 
         return self.item_dict
 
@@ -133,7 +141,7 @@ class FileWindow:
             for item in self.item_dict:
                 WINDOW.blit(item.textitem, item.rect)
 
-    def setDoClicked(self, function, function2=False):
+    def set_do_clicked(self, function, function2=False):
         for item in self.item_dict:
             if item.text != "NEW":
                 item.do_clicked = function

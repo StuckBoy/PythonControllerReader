@@ -41,7 +41,11 @@ clock = pygame.time.Clock()
 done = False
 words = "PRESS BUTTON"
 name = ""
-text = font.render(words, True, (200, 74, 220))
+text_color = (200, 74, 220)
+"""
+Color to be used when rendering all text throughout this file.
+"""
+text = font.render(words, True, text_color)
 
 drawlist = []
 joysticks = {}
@@ -910,7 +914,7 @@ def stick_collidables():
 def clear_text():
     # TODO Does calling this work if it's only ever called from main?
     words = ""
-    text = font.render(words, True, (200, 74, 220))
+    text = font.render(words, True, text_color)
 
 
 # TODO
@@ -973,7 +977,7 @@ while not done:
                     if IDofgamepad == deviceremovedID:
                         ActiveStick.gamepad = False
                         words = "PRESS BUTTON"
-                        text = font.render(words, True, (200, 74, 220))
+                        text = font.render(words, True, text_color)
             del joysticks[deviceremovedID]
 
         # TODO
